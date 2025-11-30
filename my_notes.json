@@ -1,0 +1,61 @@
+[
+  {
+    "id": "df71b656-9761-4497-9b2a-dfd26f1309a8",
+    "title": "varad",
+    "secret": "Vard is a Boy. He loves do conding.",
+    "tags": [
+      "person",
+      "personality",
+      "varad"
+    ],
+    "created_at": "2025-11-25T17:49:40.914932"
+  },
+  {
+    "id": "68084945-f810-47fd-803b-37be74442d79",
+    "title": "Python",
+    "secret": "The Python is dynamic programming language\"",
+    "tags": [
+      "programming language",
+      "python",
+      "definition"
+    ],
+    "created_at": "2025-11-25T20:58:02.829715"
+  },
+  {
+    "id": "99078a83-c877-4c6e-9820-91c5ee176aa0",
+    "title": "Guthal",
+    "secret": "Guthal is the boy who do hhis work sincerely.",
+    "tags": [
+      "guthal",
+      "best friend"
+    ],
+    "created_at": "2025-11-25T21:16:18.083936"
+  },
+  {
+    "id": "29aa1066-2631-4727-8618-2007b6d2e790",
+    "title": "this is a title",
+    "secret": "this is a secret",
+    "tags": [
+      "maths"
+    ],
+    "created_at": "2025-11-25T23:05:28.490473"
+  },
+  {
+    "id": "d21d8794-ba9f-47d1-ab46-a71a3a67f1b6",
+    "title": "this is a title",
+    "secret": "asfgjg jhgjhg kh kj ",
+    "tags": [
+      "maths"
+    ],
+    "created_at": "2025-11-25T23:08:56.024126"
+  },
+  {
+    "id": "bdbfe6fe-0fd8-4e06-9df0-9e3a8a91eee0",
+    "title": "DSA",
+    "secret": "Data structure is way to store , organise , retrieve and manipulate data efficiently",
+    "tags": [
+      "definition"
+    ],
+    "created_at": "2025-11-26T14:58:35.222869"
+  }
+]
