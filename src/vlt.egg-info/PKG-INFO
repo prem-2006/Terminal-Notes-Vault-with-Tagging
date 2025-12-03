@@ -1,0 +1,124 @@
+Metadata-Version: 2.4
+Name: vlt
+Version: 0.1.0
+Summary: Terminal vault CLI for secure notes
+Author: Antigravity
+Author-email: Your Name <you@example.com>
+License: MIT
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+Dynamic: author
+Dynamic: requires-python
+
+# Terminal Note Vault
+
+A local, offline password security toolkit and note vault.
+
+## Security Toolkit Demo (Single Script)
+
+A standalone educational demo for secure password management.
+
+### Features
+- **Secure Vault**: AES-128 (Fernet) encryption with PBKDF2 key derivation.
+- **Password Policy**: Enforces min 8 chars, alphanumeric (letters + numbers).
+- **Input Masking**: Asterisks (`******`) on Windows, hidden input on others.
+- **Lockout Manager**: Exponential backoff for failed attempts.
+- **Batch Mode**: Analyze CSV files for password strength.
+- **Entropy Estimation**: Log2-based strength estimation.
+
+### Installation
+1. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+### Usage
+Run the script directly:
+
+```bash
+python src/terminal_vault/security_toolkit.py <command> [args]
+```
+
+**Commands:**
+- `init`: Initialize a new vault and set a master password.
+- `add <name>`: Add a new secret.
+- `get <name>`: Retrieve a secret.
+- `check`: Check a password against the policy.
+- `batch <file.csv>`: Batch check passwords from a CSV file.
+- `reset-lockout`: Reset failed attempt counters.
+
+### Security Boundaries (IMPORTANT)
+> [!WARNING]
+> **Educational Demo Only**
+
+This toolkit is designed for educational purposes to demonstrate security concepts.
+- **Scope**: Protects against casual local access and throttled brute-force attacks.
+- **Limitations**:
+    - **No Host Protection**: Does not protect against malware, keyloggers, or root access.
+    - **No Memory Protection**: Secrets may exist in memory.
+    - **No Cloud/Sync**: Strictly local storage.
+    - **No Hardware Security**: Does not use TPM or Secure Enclave.
+    - **Recovery**: If you lose your Master Password and Recovery Token, data is lost.
+
+---
+
+## Main Application Usage (`vault`)
+
+The main application is installed as the `vault` command.
+
+### Installation
+```bash
+pip install .
+```
+
+### Commands
+
+#### 1. Initialization
+Initialize a new vault. You will be prompted to set a username and master password.
+```bash
+vault init
+```
+
+#### 2. User Management
+Manage your credentials (username and password).
+```bash
+vault user
+```
+
+#### 3. Reset Password
+Reset your master password (requires current password).
+```bash
+vault reset-password
+```
+
+#### 4. Add Entry
+Add a new note or secret to the vault.
+- `--title`: Title of the entry (Required).
+- `--tags`: Comma-separated tags (Optional).
+- You will be prompted for the **Note** content (visible input).
+```bash
+vault add --title "My Secret" --tags "work,finance"
+```
+
+#### 5. Retrieve Entries
+Search and view entries.
+- `--tag`: Filter by a specific tag.
+- `--search`: Search for text in titles.
+- If no arguments are provided, lists all entries.
+```bash
+vault get
+vault get --tag "work"
+vault get --search "bank"
+```
+
+#### 6. Batch Security Check
+Check a CSV file of passwords for security policy violations.
+```bash
+vault check passwords.csv
+```
+
+#### 7. Security Report
+Generate a report of the current vault's security health (e.g., weak passwords).
+```bash
+vault report
+```

@@ -1,0 +1,2 @@
+[console_scripts]
+vlt = terminal_vault.cli:main
