@@ -12,6 +12,6 @@ setup(
     install_requires=[
         # No external dependencies as per requirements
     ],
-    author="Antigravity",
+    author="adnan, prem",
     description="A terminal-based secure notes vault (Demo)",
 )
