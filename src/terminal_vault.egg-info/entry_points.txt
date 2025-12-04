@@ -1,0 +1,2 @@
+[console_scripts]
+vault = terminal_vault.cli.main:main
