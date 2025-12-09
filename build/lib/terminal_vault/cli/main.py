@@ -4,12 +4,12 @@ import asyncio
 import getpass
 import os
 import json
+import csv
 from ..core.vault import Vault
 from ..core.config import Config
 from ..utils.logging_utils import setup_logging
 from ..utils.batch import import_csv, batch_check_entries
 from ..core.security import calculate_entropy
-
 from ..core.lockout import LockoutManager
 
 def get_masked_input(prompt: str = "Password: ") -> str:
@@ -93,7 +93,6 @@ def main():
         try:
             os.remove(plain_file)
         except OSError as e:
-            # Just log/print if we can't delete, but don't crash
             pass
 
     parser = argparse.ArgumentParser(description="Terminal Notes Vault")
@@ -107,6 +106,9 @@ def main():
     
     # vault reset-password
     subparsers.add_parser('reset-password', help='Reset password')
+
+    # vault reset-credentials (NEW)
+    subparsers.add_parser('reset-credentials', help='Reset credentials using backup')
 
     # vault add --title "..." --tags "..."
     add_parser = subparsers.add_parser('add', help='Add a new entry')
@@ -152,7 +154,6 @@ def main():
 
     elif args.command == 'user':
         if not os.path.exists(vault_file):
-            # Treat as init
             print("Vault not found. Creating new vault.")
             username = input("Set Username: ")
             while True:
@@ -206,10 +207,65 @@ def main():
                 continue
             break
         
-        # Keep same username
         vault.update_credentials(vault.username, new_pwd)
         print("Password reset successfully.")
         logger.info("Password reset")
+
+    elif args.command == 'reset-credentials':
+        csv_file = vault_file.replace('.json', '.csv')
+        if not os.path.exists(csv_file):
+            print(f"Error: Backup file '{csv_file}' not found. Cannot reset credentials.", file=sys.stderr)
+            print("The reset function relies on the auto-generated CSV backup.", file=sys.stderr)
+            return
+
+        print("WARNING: This will overwrite your current encrypted vault with data from the CSV backup.")
+        confirm_reset = input("Are you sure you want to proceed? (yes/no): ").lower()
+        if confirm_reset != 'yes':
+            print("Operation cancelled.")
+            return
+
+        try:
+            new_username = input("Enter new username: ").strip()
+            if not new_username:
+                print("Username cannot be empty.", file=sys.stderr)
+                return
+            new_password = get_masked_input("Enter new password: ")
+            confirm_pass = get_masked_input("Confirm password: ")
+
+            if new_password != confirm_pass:
+                print("Passwords do not match.", file=sys.stderr)
+                return
+
+            # Read backup data
+            recovered_entries = []
+            try:
+                with open(csv_file, 'r', newline='') as f:
+                    reader = csv.DictReader(f)
+                    for row in reader:
+                        entry = {
+                            'id': row.get('id'),
+                            'date': row.get('date'),
+                            'title': row.get('title'),
+                            'note': row.get('note'),
+                            'tags': row.get('tags', '').split(',') if row.get('tags') else [],
+                            'username': new_username
+                        }
+                        recovered_entries.append(entry)
+                print(f"Read {len(recovered_entries)} entries from backup.")
+            except Exception as e:
+                print(f"Error reading backup file: {e}", file=sys.stderr)
+                return
+
+            vault.create_new(new_username, new_password)
+            vault.entries = recovered_entries
+            vault.save()
+            lockout_manager.reset()
+            print("Credentials reset successfully. Data restored from backup.")
+            logger.info("Credentials reset from backup")
+            
+        except KeyboardInterrupt:
+            print("\nOperation cancelled.")
+            return
 
     elif args.command == 'add':
         if not os.path.exists(vault_file):
@@ -237,8 +293,12 @@ def main():
         for e in entries:
             if args.tag and args.tag not in e.get('tags', []):
                 continue
-            if args.search and args.search.lower() not in e.get('title', '').lower():
-                continue
+            if args.search:
+                search_term = args.search.lower()
+                title_match = search_term in e.get('title', '').lower()
+                note_match = search_term in e.get('note', '').lower()
+                if not (title_match or note_match):
+                    continue
             found.append(e)
 
         if not found:

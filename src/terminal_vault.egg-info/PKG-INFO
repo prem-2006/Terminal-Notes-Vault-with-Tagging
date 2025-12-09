@@ -10,115 +10,146 @@ Description-Content-Type: text/markdown
 Dynamic: author
 Dynamic: requires-python
 
-# Terminal Note Vault
+This is Terminal notes vault with tagging projects in this we have  make the developer easy to make notes in the terminal with tags and keywords while using any code editor
 
-A local, offline password security toolkit and note vault.
+# Terminal Notes Vault
 
-## Security Toolkit Demo (Single Script)
+A secure, terminal-based vault for storing notes and passwords with tagging support.
+This project demonstrates secure coding practices using only Python standard libraries.
 
-A standalone educational demo for secure password management.
+## Features
 
-### Features
-- **Secure Vault**: AES-128 (Fernet) encryption with PBKDF2 key derivation.
-- **Password Policy**: Enforces min 8 chars, alphanumeric (letters + numbers).
-- **Input Masking**: Asterisks (`******`) on Windows, hidden input on others.
-- **Lockout Manager**: Exponential backoff for failed attempts.
-- **Batch Mode**: Analyze CSV files for password strength.
-- **Entropy Estimation**: Log2-based strength estimation.
+- **Secure Storage**: Uses PBKDF2 for key derivation and a demo XOR-based stream cipher (for demonstration purposes).
+- **Tagging**: Organize entries with tags.
+- **Batch Mode**: Import and check entries from CSV files.
+- **Security Controls**:
+    - Secure input masking.
+    - Audit logging with redaction.
+    - Brute-force protection (lockout after 3 failed attempts).
+    - Password strength estimation.
 
-### Installation
-1. Install dependencies:
+## Installation
+
+1. Clone the repository.
+2. Install the package:
    ```bash
-   pip install -r requirements.txt
+   pip install .
    ```
 
-### Usage
-Run the script directly:
+## Install as a Package
 
 ```bash
-python src/terminal_vault/security_toolkit.py <command> [args]
-```
+    pip install terminal-vault
+    ```
 
-**Commands:**
-- `init`: Initialize a new vault and set a master password.
-- `add <name>`: Add a new secret.
-- `get <name>`: Retrieve a secret.
-- `check`: Check a password against the policy.
-- `batch <file.csv>`: Batch check passwords from a CSV file.
-- `reset-lockout`: Reset failed attempt counters.
 
-### Security Boundaries (IMPORTANT)
-> [!WARNING]
-> **Educational Demo Only**
+## Usage
 
-This toolkit is designed for educational purposes to demonstrate security concepts.
-- **Scope**: Protects against casual local access and throttled brute-force attacks.
-- **Limitations**:
-    - **No Host Protection**: Does not protect against malware, keyloggers, or root access.
-    - **No Memory Protection**: Secrets may exist in memory.
-    - **No Cloud/Sync**: Strictly local storage.
-    - **No Hardware Security**: Does not use TPM or Secure Enclave.
-    - **Recovery**: If you lose your Master Password and Recovery Token, data is lost.
-
----
-
-## Main Application Usage (`vault`)
-
-The main application is installed as the `vault` command.
-
-### Installation
-```bash
-pip install .
-```
-
-### Commands
-
-#### 1. Initialization
-Initialize a new vault. You will be prompted to set a username and master password.
+### Initialize Vault
 ```bash
 vault init
 ```
 
-#### 2. User Management
-Manage your credentials (username and password).
+### Add Entry
 ```bash
-vault user
+vault add --title "My Secret" --tags "personal,finance"
 ```
 
-#### 3. Reset Password
-Reset your master password (requires current password).
+### Retrieve Entries
 ```bash
-vault reset-password
+vault get --tag "personal"
+vault get --search "Secret"
 ```
 
-#### 4. Add Entry
-Add a new note or secret to the vault.
-- `--title`: Title of the entry (Required).
-- `--tags`: Comma-separated tags (Optional).
-- You will be prompted for the **Note** content (visible input).
+### Batch Check
 ```bash
-vault add --title "My Secret" --tags "work,finance"
+vault check entries.csv
 ```
 
-#### 5. Retrieve Entries
-Search and view entries.
-- `--tag`: Filter by a specific tag.
-- `--search`: Search for text in titles.
-- If no arguments are provided, lists all entries.
-```bash
-vault get
-vault get --tag "work"
-vault get --search "bank"
-```
-
-#### 6. Batch Security Check
-Check a CSV file of passwords for security policy violations.
-```bash
-vault check passwords.csv
-```
-
-#### 7. Security Report
-Generate a report of the current vault's security health (e.g., weak passwords).
+### Generate Report
 ```bash
 vault report
 ```
+
+## Security Boundaries (Demo Scope)
+
+> [!IMPORTANT]
+> **Encryption**: This tool uses a **demonstration encryption scheme** (XOR stream cipher) because the requirements restricted usage to Python Standard Libraries only (no `cryptography` or `PyCryptodome`). **DO NOT USE FOR HIGH-VALUE SECRETS IN PRODUCTION.**
+
+- **Key Derivation**: Uses `hashlib.pbkdf2_hmac` with SHA-256 and 100,000 iterations.
+- **Memory Safety**: Python strings are immutable, so secrets may persist in memory until garbage collected.
+- **Side Channels**: No specific protection against timing attacks or power analysis.
+
+## Project Structure
+
+- `src/`: Source code.
+- `tests/`: Unit tests.
+- `vault.log`: Audit log (redacted).
+- `.vault_lockout`: Lockout state file.
+# Terminal Notes Vault
+
+A secure, terminal-based vault for storing notes and passwords with tagging support.
+This project demonstrates secure coding practices using only Python standard libraries.
+
+## Features
+
+- **Secure Storage**: Uses PBKDF2 for key derivation and a demo XOR-based stream cipher (for demonstration purposes).
+- **Tagging**: Organize entries with tags.
+- **Batch Mode**: Import and check entries from CSV files.
+- **Security Controls**:
+    - Secure input masking.
+    - Audit logging with redaction.
+    - Brute-force protection (lockout after 3 failed attempts).
+    - Password strength estimation.
+
+## Installation
+
+1. Clone the repository.
+2. Install the package:
+   ```bash
+   pip install .
+   ```
+
+## Usage
+
+### Initialize Vault
+```bash
+vault init
+```
+
+### Add Entry
+```bash
+vault add --title "My Secret" --tags "personal,finance"
+```
+
+### Retrieve Entries
+```bash
+vault get --tag "personal"
+vault get --search "Secret"
+```
+
+### Batch Check
+```bash
+vault check entries.csv
+```
+
+### Generate Report
+```bash
+vault report
+```
+
+## Security Boundaries (Demo Scope)
+
+> [!IMPORTANT]
+> **Encryption**: This tool uses a **demonstration encryption scheme** (XOR stream cipher) because the requirements restricted usage to Python Standard Libraries only (no `cryptography` or `PyCryptodome`). **DO NOT USE FOR HIGH-VALUE SECRETS IN PRODUCTION.**
+
+- **Key Derivation**: Uses `hashlib.pbkdf2_hmac` with SHA-256 and 100,000 iterations.
+- **Memory Safety**: Python strings are immutable, so secrets may persist in memory until garbage collected.
+- **Side Channels**: No specific protection against timing attacks or power analysis.
+
+## Project Structure
+
+- `src/`: Source code.
+- `tests/`: Unit tests.
+- `vault.log`: Audit log (redacted).
+- `.vault_lockout`: Lockout state file.
