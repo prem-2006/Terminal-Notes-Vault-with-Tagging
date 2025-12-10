@@ -21,3 +21,4 @@ src/terminal_vault/plugins/base.py
 src/terminal_vault/utils/__init__.py
 src/terminal_vault/utils/batch.py
 src/terminal_vault/utils/logging_utils.py
+tests/test_hiding.py
